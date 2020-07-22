@@ -99,4 +99,7 @@ if (process.env.NODE_ENV === "production") {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/build/index.html"));
 });
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname + "/build/index.html"));
+})
 module.exports = app;
