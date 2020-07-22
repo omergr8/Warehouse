@@ -69,7 +69,9 @@ app.use("/api/trees", treeDataRouter);
 app.use("/api/warehouses", warehouseRouter);
 app.use("/api/shops", shopRouter);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+app.get("*", function (req, res, next) {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -90,16 +92,5 @@ if (process.env.NODE_ENV === "production") {
   //set static folder
   app.use(express.static("build"));
 }
-// app.use("*", (req, res, next) => {
-//   res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
-// app.get("/*",, (req, res) => {
-//   res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/build/index.html"));
-});
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname + "/build/index.html"));
-})
+
 module.exports = app;
