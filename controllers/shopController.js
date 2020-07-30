@@ -1,4 +1,4 @@
-const Shop = require("../models/category");
+const Category = require("../models/category");
 const responseHandler = require("../helpers/responseHandler");
 const messages = require("../helpers/constants_variables").messages;
 const mongoose = require("mongoose");
@@ -20,6 +20,10 @@ module.exports = {
  *             properties:
  *               name:
  *                 type: string
+ *               parent:
+ *                 type: string
+ *               warehouse:
+ *                 type: string
  * 
  *     responses:
  *       200:
@@ -33,9 +37,9 @@ module.exports = {
     
     let data = {};
     data.name = name;
-    // data.parent_id = mongoose.Types.ObjectId(req.body.parent);
-    // data.warehouse = mongoose.Types.ObjectId(req.body.warehouse);
-    const response = await Shop.save_category(data);
+    data.parent_id = mongoose.Types.ObjectId(req.body.parent);
+    data.warehouse = mongoose.Types.ObjectId(req.body.warehouse);
+    const response = await Category.save_category(data);
 
     if (!response.isExecuted) {
       return responseHandler.failure(

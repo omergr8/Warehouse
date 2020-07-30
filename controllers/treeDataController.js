@@ -31,10 +31,10 @@ module.exports = {
 	 *       200:
 	 *         description: Data Sent
 	 */
-  async getWarehouseNames(req, res, next) {
+  async getWarehouseData(req, res, next) {
     let { page, limit, parent, warehouse } = req.query;
 		if (!warehouse) {
-			const response = await Warehouse.findWarehouses({
+			let response = await Warehouse.findWarehouses({
 				page, 
 				limit
 			}, namesOnly=true);
@@ -56,16 +56,19 @@ module.exports = {
 			}
 
 		} else {
+			data = {};
 			if (!parent) {
-				parent= warehouse;
+				data.is_parent_in_warehouse = true;
+			} else {
+				data.is_parent_in_warehouse = false;
+				data.parent = parent;
 			}
-			let response = await Category.findCategories({
-				page, 
-				limit,
-				parent,
-				warehouse
-			}, namesOnly=true);
-	
+			data.page = page;
+			data.limit = limit;
+			data.warehouse = warehouse;
+			let response = await Category.findCategories(
+				data, 
+				namesOnly=true);
 			if (!response.isExecuted) {
 				return responseHandler.failure(
 					res,
@@ -86,22 +89,22 @@ module.exports = {
 	
 			} else {
 				total_results = response.data.total_results;
-				offset = 0;
-				page = 0;
-				if (page && limit) {
+				offset = null;
+				if (page && limit && (total_results != 0)) {
 					page_1 = Math.ceil(total_results/limit);
 	
 					if (page == page_1) {
-						page = 1;
 						limit = page * limit - total_results;
+						page = 1;
+						
 					} else{
-						 offset = page_1 * limit - total_results;
+						 offset = (page - 1) * limit - total_results;
 						 page = 1;
 					}
 				}
 				
 				response = await ProductCategory.findProducts({
-					page: 1, 
+					page, 
 					limit,
 					offset,
 					category_id : parent
@@ -117,9 +120,9 @@ module.exports = {
 				}
 				
 				total_results = response_data.total_results + response.data.total_results;
-				results = Object.assign(response_data.results, response.data.results);
+				results = response_data.results.concat(response.data.results);
 	
-	
+				
 				return responseHandler.success(
 					res,
 					{
@@ -163,6 +166,7 @@ module.exports = {
 
 		if (!parent) {
 			warehouse =null
+			parent = [];
 		} else {
 			warehouse = 1;
 		}
@@ -193,22 +197,23 @@ module.exports = {
 
 		} else {
 			total_results = response.data.total_results;
-			offset = 0;
-			page = 0;
-			if (page && limit) {
+			offset = null;
+
+			if (page && limit && total_results != 0) {
 				page_1 = Math.ceil(total_results/limit);
 
 				if (page == page_1) {
-					page = 1;
 					limit = page * limit - total_results;
+					page = 1;
+					
 				} else{
-					 offset = page_1 * limit - total_results;
+					 offset = (page - 1) * limit - total_results;
 					 page = 1;
 				}
 			}
 			
 			response = await ProductCategory.findProducts({
-				page: 1, 
+				page, 
 				limit,
 				offset,
 				category_id : parent
@@ -224,7 +229,8 @@ module.exports = {
 			}
 			
 			total_results = response_data.total_results + response.data.total_results;
-			results = Object.assign(response_data.results, response.data.results);
+			
+			results = response_data.results.concat(response.data.results);
 
 
 			return responseHandler.success(
@@ -242,7 +248,7 @@ module.exports = {
 /**
  * @swagger
  *
- * /api/shops:
+ * /api/trees/shops:
  *   post:
  *     tags:
  *       - Trees - Controls

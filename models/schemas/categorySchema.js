@@ -21,6 +21,10 @@ const categorySchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: 'Warehouse'   
   },
+  is_parent_in_warehouse: {
+    type: Boolean,
+    default: false
+  },
   added_on: {
 		type: Date,
 		default: Date.now

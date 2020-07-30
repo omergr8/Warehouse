@@ -37,17 +37,17 @@ Category.find_one = async function(data) {
 }
 Category.save_category = async function(data) {
 	try {
+		let category = null;
 		if (data.parent_id) {
-			let category = new this({
+			category = new this({
 				name: data.name,
 				parents: [data.parent_id],
-				// warehouse: data.warehouse
+				warehouse: data.warehouse
 			});
 		} else {
-			let category = new this({
+			category = new this({
 				name: data.name,
-				parents: [data.parent_id],
-				// warehouse: data.warehouse
+				warehouse: data.warehouse
 			});
 		}
 
@@ -63,16 +63,21 @@ Category.findCategories = async function(data, namesOnly=false) {
 	let options = {};
 	let total_results = 0;
 	let results = null;
-	let {page, limit, name, parent, warehouse} = data;
+	let {page, limit, name, parent, warehouse, is_parent_in_warehouse} = data;
 
-	query.parents = [];
+	
 	try {
+		if (typeof is_parent_in_warehouse ==='boolean') {
+			query.is_parent_in_warehouse = is_parent_in_warehouse;
+		}
+		//query.parents = [];
 		if (name) {
 			query.name = {$regex: new RegExp('^'+ data.name, 'i')};
     }
     if (parent) {
       query.parents = parent;
-		}
+		} 
+
 		if (warehouse != 1) {
 			query.warehouse = warehouse;
 		}

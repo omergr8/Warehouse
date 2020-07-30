@@ -24,7 +24,7 @@ ProductCategory.findProducts = async function(data, namesOnly=false) {
 	let query = {};
 	let options = {};
 	let total_results = 0;
-	let results = null;
+	let results = [];
 	let {page, limit, name, offset, category_id} = data;
 
 	try {

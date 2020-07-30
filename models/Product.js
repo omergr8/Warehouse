@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const modelResponse = require("../helpers/modelResponse");
-const ProductSchema = require("./schemas/ProductSchema");
+const ProductSchema = require("./schemas/productSchema");
 const Product = mongoose.model("Product", ProductSchema);
 const messages = require('../helpers/constants_variables').messages;
 

@@ -20,6 +20,16 @@ const productCategorySchema = new Schema({
     ref: 'Product'
   },
 
+  warehouse: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Warehouse'    
+  },
+  shops: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Shop'
+    }
+  ],
   added_on: {
 		type: Date,
 		default: Date.now
